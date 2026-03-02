@@ -13,16 +13,16 @@ char *cap_string(char *s)
 
 	while (s[i] != '\0')
 	{
-		/* تحويل أول حرف في السلسلة إذا كان صغيراً */
+		/* Capitalize first letter of the string */
 		if (i == 0 && (s[i] >= 'a' && s[i] <= 'z'))
 			s[i] -= 32;
 
-		/* البحث عن الفواصل */
+		/* Check for separators */
 		for (j = 0; sep[j] != '\0'; j++)
 		{
 			if (s[i] == sep[j])
 			{
-				/* إذا كان الحرف التالي صغيراً، حوله لكبير */
+				/* Capitalize char following separator */
 				if (s[i + 1] >= 'a' && s[i + 1] <= 'z')
 				{
 					s[i + 1] -= 32;
