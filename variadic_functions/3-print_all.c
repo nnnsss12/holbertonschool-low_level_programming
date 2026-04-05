@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "variadic_functions.h"
 
 /**
@@ -12,50 +13,32 @@ void print_all(const char * const format, ...)
 	va_list args;
 	int i;
 	int sep;
-	char c;
-	int n;
-	double f;
 	char *s;
+	char buf[64];
+	char *found;
+	char *types = "cifs";
 
 	i = 0;
 	sep = 0;
 	va_start(args, format);
 	while (format && format[i])
 	{
+		buf[0] = '\0';
 		s = NULL;
-		if (format[i] == 'c')
+		found = strchr(types, format[i]);
+		while (found && *found == 'c')
+		{ sprintf(buf, "%c", va_arg(args, int)); s = buf; break; }
+		while (found && *found == 'i')
+		{ sprintf(buf, "%d", va_arg(args, int)); s = buf; break; }
+		while (found && *found == 'f')
+		{ sprintf(buf, "%f", va_arg(args, double)); s = buf; break; }
+		while (found && *found == 's')
+		{ s = va_arg(args, char *); break; }
+		if (found)
 		{
-			c = va_arg(args, int);
 			if (sep)
 				printf(", ");
-			printf("%c", c);
-			sep = 1;
-		}
-		else if (format[i] == 'i')
-		{
-			n = va_arg(args, int);
-			if (sep)
-				printf(", ");
-			printf("%d", n);
-			sep = 1;
-		}
-		else if (format[i] == 'f')
-		{
-			f = va_arg(args, double);
-			if (sep)
-				printf(", ");
-			printf("%f", f);
-			sep = 1;
-		}
-		else if (format[i] == 's')
-		{
-			s = va_arg(args, char *);
-			if (sep)
-				printf(", ");
-			if (!s)
-				printf("(nil)");
-			else
-				printf("%s", s);
+			printf("%s", s ? s : "(nil)");
 			sep = 1;
 		}
 		i++;
