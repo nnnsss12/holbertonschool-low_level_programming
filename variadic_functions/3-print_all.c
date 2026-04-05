@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 #include "variadic_functions.h"
 
 /**
@@ -11,34 +10,35 @@
 void print_all(const char * const format, ...)
 {
 	va_list args;
-	int i;
+	unsigned int i;
+	unsigned int j;
 	int sep;
 	char *s;
-	char buf[64];
-	char *found;
 	char *types = "cifs";
+	int n;
+	double d;
 
 	i = 0;
 	sep = 0;
 	va_start(args, format);
 	while (format && format[i])
 	{
-		buf[0] = '\0';
+		j = 0;
 		s = NULL;
-		found = strchr(types, format[i]);
-		while (found && *found == 'c')
-		{ sprintf(buf, "%c", va_arg(args, int)); s = buf; break; }
-		while (found && *found == 'i')
-		{ sprintf(buf, "%d", va_arg(args, int)); s = buf; break; }
-		while (found && *found == 'f')
-		{ sprintf(buf, "%f", va_arg(args, double)); s = buf; break; }
-		while (found && *found == 's')
-		{ s = va_arg(args, char *); break; }
-		if (found)
+		n = 0;
+		d = 0;
+		while (types[j] && types[j] != format[i])
+			j++;
+		if (j < 3 && types[j])
 		{
-			if (sep)
-				printf(", ");
-			printf("%s", s ? s : "(nil)");
+			j == 2 ? (d = va_arg(args, double), printf("%s%f", sep ? ", " : "", d))
+				: (n = va_arg(args, int), j == 0 ? printf("%s%c", sep ? ", " : "", n) : printf("%s%d", sep ? ", " : "", n));
+			sep = 1;
+		}
+		if (j == 3)
+		{
+			s = va_arg(args, char *);
+			printf("%s%s", sep ? ", " : "", s ? s : "(nil)");
 			sep = 1;
 		}
 		i++;
