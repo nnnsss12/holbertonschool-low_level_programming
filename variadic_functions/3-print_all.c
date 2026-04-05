@@ -10,7 +10,7 @@
 void print_all(const char * const format, ...)
 {
 	va_list args;
-	unsigned int i;
+	int i;
 	int sep;
 	char c;
 	int n;
@@ -24,13 +24,40 @@ void print_all(const char * const format, ...)
 	{
 		s = NULL;
 		if (format[i] == 'c')
-		{ c = va_arg(args, int); if (sep) printf(", "); printf("%c", c); sep = 1; }
-		if (format[i] == 'i')
-		{ n = va_arg(args, int); if (sep) printf(", "); printf("%d", n); sep = 1; }
-		if (format[i] == 'f')
-		{ f = va_arg(args, double); if (sep) printf(", "); printf("%f", f); sep = 1; }
-		if (format[i] == 's')
-		{ s = va_arg(args, char *); if (sep) printf(", "); if (!s) printf("(nil)"); else printf("%s", s); sep = 1; }
+		{
+			c = va_arg(args, int);
+			if (sep)
+				printf(", ");
+			printf("%c", c);
+			sep = 1;
+		}
+		else if (format[i] == 'i')
+		{
+			n = va_arg(args, int);
+			if (sep)
+				printf(", ");
+			printf("%d", n);
+			sep = 1;
+		}
+		else if (format[i] == 'f')
+		{
+			f = va_arg(args, double);
+			if (sep)
+				printf(", ");
+			printf("%f", f);
+			sep = 1;
+		}
+		else if (format[i] == 's')
+		{
+			s = va_arg(args, char *);
+			if (sep)
+				printf(", ");
+			if (!s)
+				printf("(nil)");
+			else
+				printf("%s", s);
+			sep = 1;
+		}
 		i++;
 	}
 	va_end(args);
