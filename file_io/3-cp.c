@@ -1,6 +1,7 @@
 #include "main.h"
 #include <stdlib.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 /**
  * main - copies the content of a file to another file
