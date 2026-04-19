@@ -4,6 +4,33 @@
 #include <stdio.h>
 
 /**
+ * open_files - opens source and destination files
+ * @file_from: source file name
+ * @file_to: destination file name
+ * @fd_to: pointer to store destination file descriptor
+ *
+ * Return: file descriptor of source file
+ */
+int open_files(char *file_from, char *file_to, int *fd_to)
+{
+	int fd_from;
+
+	fd_from = open(file_from, O_RDONLY);
+	if (fd_from == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file_from);
+		exit(98);
+	}
+	*fd_to = open(file_to, O_WRONLY | O_CREAT | O_TRUNC, 0664);
+	if (*fd_to == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file_to);
+		exit(99);
+	}
+	return (fd_from);
+}
+
+/**
  * main - copies the content of a file to another file
  * @ac: argument count
  * @av: argument vector
@@ -21,18 +48,7 @@ int main(int ac, char **av)
 		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
 		exit(97);
 	}
-	fd_from = open(av[1], O_RDONLY);
-	if (fd_from == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", av[1]);
-		exit(98);
-	}
-	fd_to = open(av[2], O_WRONLY | O_CREAT | O_TRUNC, 0664);
-	if (fd_to == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", av[2]);
-		exit(99);
-	}
+	fd_from = open_files(av[1], av[2], &fd_to);
 	while ((r = read(fd_from, buf, 1024)) > 0)
 	{
 		w = write(fd_to, buf, r);
