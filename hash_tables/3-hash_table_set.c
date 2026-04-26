@@ -1,6 +1,25 @@
 #include "hash_tables.h"
 
 /**
+ * update_value - Updates value of existing node
+ * @node: The existing node
+ * @value: The new value
+ *
+ * Return: 1 if succeeded, 0 otherwise
+ */
+static int update_value(hash_node_t *node, const char *value)
+{
+	char *new_value;
+
+	new_value = strdup(value);
+	if (new_value == NULL)
+		return (0);
+	free(node->value);
+	node->value = new_value;
+	return (1);
+}
+
+/**
  * hash_table_set - Adds an element to the hash table
  * @ht: The hash table
  * @key: The key string
@@ -17,30 +36,23 @@ int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 		return (0);
 
 	index = key_index((const unsigned char *)key, ht->size);
-
 	node = ht->array[index];
 	while (node != NULL)
 	{
 		if (strcmp(node->key, key) == 0)
-		{
-			free(node->value);
-			node->value = strdup(value);
-			return (node->value != NULL ? 1 : 0);
-		}
+			return (update_value(node, value));
 		node = node->next;
 	}
 
 	node = malloc(sizeof(hash_node_t));
 	if (node == NULL)
 		return (0);
-
 	node->key = strdup(key);
 	if (node->key == NULL)
 	{
 		free(node);
 		return (0);
 	}
-
 	node->value = strdup(value);
 	if (node->value == NULL)
 	{
@@ -48,9 +60,7 @@ int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 		free(node);
 		return (0);
 	}
-
 	node->next = ht->array[index];
 	ht->array[index] = node;
-
 	return (1);
 }
